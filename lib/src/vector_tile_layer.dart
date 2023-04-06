@@ -10,6 +10,8 @@ import 'tile_offset.dart';
 import 'tile_providers.dart';
 import 'vector_tile_provider.dart';
 
+late FlutterMapState mapState;
+
 /// A widget for a vector tile layer, to be used as a child
 /// of a [FlutterMap].
 /// See readme for details.
@@ -146,7 +148,7 @@ The theme uses the following sources: ${theme.tileSources.toList().sorted().join
 
   @override
   Widget build(BuildContext context) {
-    final mapState = FlutterMapState.maybeOf(context)!;
+    mapState = FlutterMapState.maybeOf(context)!;
     return VectorTileCompositeLayer(VectorTileLayerOptions(this), mapState);
   }
 }

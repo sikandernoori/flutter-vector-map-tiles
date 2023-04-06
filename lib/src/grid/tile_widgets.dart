@@ -27,19 +27,22 @@ class TileWidgets extends ChangeNotifier {
   final bool showTileDebugInfo;
   final int maxSubstitutionDifference;
   final int tileZoomSubstitutionOffset;
+  final double rotation;
 
   TileWidgets(
-      this._zoomScaleFunction,
-      this._zoomFunction,
-      this._zoomDetailFunction,
-      this._theme,
-      this._symbolTheme,
-      this._tileProvider,
-      this._textCache,
-      this.maxSubstitutionDifference,
-      this.tileZoomSubstitutionOffset,
-      this.paintBackground,
-      this.showTileDebugInfo);
+    this._zoomScaleFunction,
+    this._zoomFunction,
+    this._zoomDetailFunction,
+    this._theme,
+    this._symbolTheme,
+    this._tileProvider,
+    this._textCache,
+    this.maxSubstitutionDifference,
+    this.tileZoomSubstitutionOffset,
+    this.paintBackground,
+    this.showTileDebugInfo, {
+    this.rotation = 0,
+  });
 
   void update(TileViewport viewport, List<TileIdentity> tiles) {
     if (tiles.isEmpty || _disposed) {
@@ -48,7 +51,8 @@ class TileWidgets extends ChangeNotifier {
     _updateModels(viewport, tiles);
   }
 
-  void updateWidgets() => _updateWidgets();
+  void updateWidgets({double rotation = 0}) =>
+      _updateWidgets(rotation: rotation);
 
   Map<TileIdentity, GridVectorTile> get all => _idToWidget;
 
@@ -159,14 +163,18 @@ class TileWidgets extends ChangeNotifier {
     }
   }
 
-  void _updateWidgets() {
+  void _updateWidgets({double rotation = 0}) {
     Map<TileIdentity, GridVectorTile> idToWidget = {};
     _idToModel.forEach((tile, model) {
       var previous = _idToWidget[tile];
       if (previous != null && previous.model.disposed) {
         previous = null;
       }
-      idToWidget[tile] = previous ?? _createWidget(model);
+      if (previous == null || rotation > 0) {
+        idToWidget[tile] = _createWidget(model);
+      } else {
+        idToWidget[tile] = previous;
+      }
     });
     _idToWidget = idToWidget;
   }

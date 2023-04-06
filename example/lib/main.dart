@@ -3,8 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:vector_tile_renderer/vector_tile_renderer.dart' hide TileLayer;
-// ignore: uri_does_not_exist
-import 'api_key.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,6 +36,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Style? _style;
   Object? _error;
 
+  var progress = ValueNotifier<double>(0.0);
+
   @override
   void initState() {
     super.initState();
@@ -66,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
       children.add(const Center(child: CircularProgressIndicator()));
     } else {
       children.add(Flexible(child: _map(_style!)));
+      children.add(SizedBox(height: 20, child: Flexible(child: slider())));
       children.add(Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [_statusText()]));
@@ -86,12 +87,24 @@ class _MyHomePageState extends State<MyHomePage> {
 //   Maptiler - https://api.maptiler.com/maps/outdoor/style.json?key={key}
 //   Stadia Maps - https://tiles.stadiamaps.com/styles/outdoors.json?api_key={key}
   Future<Style> _readStyle() => StyleReader(
-          uri:
-              'https://tiles.stadiamaps.com/styles/outdoors.json?api_key={key}',
+          uri: 'http://127.0.0.1:8080/styles/outdoor-v2/style.json',
           // ignore: undefined_identifier
-          apiKey: stadiaMapsApiKey,
+          // apiKey: stadiaMapsApiKey,
           logger: const Logger.console())
       .read();
+
+  Widget slider() => ValueListenableBuilder<double>(
+        builder: (BuildContext context, double value, Widget? child) => Slider(
+          value: progress.value,
+          onChanged: (value) {
+            progress.value = value;
+            _controller.rotate(value);
+          },
+          min: 0,
+          max: 360,
+        ),
+        valueListenable: progress,
+      );
 
   Widget _map(Style style) => FlutterMap(
         mapController: _controller,
@@ -110,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
               theme: style.theme,
               maximumZoom: 22,
               // tileOffset: TileOffset.mapbox,
-              layerMode: VectorTileLayerMode.raster)
+              layerMode: VectorTileLayerMode.vector)
         ],
       );
 
@@ -120,6 +133,6 @@ class _MyHomePageState extends State<MyHomePage> {
           stream: _controller.mapEventStream,
           builder: (context, snapshot) {
             return Text(
-                'Zoom: ${_controller.zoom.toStringAsFixed(2)} Center: ${_controller.center.latitude.toStringAsFixed(4)},${_controller.center.longitude.toStringAsFixed(4)}');
+                'Zoom: ${_controller.zoom.toStringAsFixed(2)} Center: ${_controller.center.latitude.toStringAsFixed(4)},${_controller.center.longitude.toStringAsFixed(4)}, Rotation: ${progress.value}');
           }));
 }

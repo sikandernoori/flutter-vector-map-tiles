@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:vector_tile_renderer/vector_tile_renderer.dart';
 
 import '../../cache/text_cache.dart';
@@ -46,7 +47,10 @@ class VectorTilePainter extends CustomPainter {
     tileSizer.apply(canvas);
 
     final tileClip = tileSizer.tileClip(size, tileSizer.effectiveScale);
-    Renderer(theme: options.theme, painterProvider: _cachingPainterProvider)
+    Renderer(
+            theme: options.theme,
+            painterProvider: _cachingPainterProvider,
+            rotation: mapState.rotation)
         .render(canvas, model.tileset!,
             clip: tileClip,
             zoomScaleFactor: tileSizer.effectiveScale,
@@ -67,7 +71,8 @@ class VectorTilePainter extends CustomPainter {
     canvas.clipRect(Offset.zero & size);
     tileSizer.apply(canvas);
     final tileClip = tileSizer.tileClip(size, tileSizer.effectiveScale);
-    Renderer(theme: options.theme).render(canvas, Tileset({}),
+    Renderer(theme: options.theme, rotation: mapState.rotation).render(
+        canvas, Tileset({}),
         clip: tileClip,
         zoomScaleFactor: tileSizer.effectiveScale,
         zoom: model.lastRenderedZoom.zoom);

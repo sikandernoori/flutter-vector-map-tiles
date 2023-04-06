@@ -314,7 +314,7 @@ class _VectorTileLayerState extends DisposableState<_VectorTileLayer> {
 
   @override
   Widget build(BuildContext context) {
-    _tileWidgets.updateWidgets();
+    _tileWidgets.updateWidgets(rotation: widget.mapState.rotation);
 
     final tiles = _tileWidgets.all.entries
         .where((entry) =>
