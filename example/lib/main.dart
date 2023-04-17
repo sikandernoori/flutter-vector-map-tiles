@@ -4,6 +4,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:vector_tile_renderer/vector_tile_renderer.dart' hide TileLayer;
 
+// ignore: uri_does_not_exist
+import 'local_keys.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -37,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Object? _error;
 
   var progress = ValueNotifier<double>(0.0);
+  var zoomLevel = ValueNotifier<double>(15.0);
 
   @override
   void initState() {
@@ -67,6 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       children.add(Flexible(child: _map(_style!)));
       children.add(SizedBox(height: 20, child: Flexible(child: slider())));
+      children.add(const SizedBox(height: 20));
+      children
+          .add(SizedBox(height: 40, child: Flexible(child: zoomLevelSlider())));
       children.add(Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [_statusText()]));
@@ -87,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
 //   Maptiler - https://api.maptiler.com/maps/outdoor/style.json?key={key}
 //   Stadia Maps - https://tiles.stadiamaps.com/styles/outdoors.json?api_key={key}
   Future<Style> _readStyle() => StyleReader(
-          uri: 'http://127.0.0.1:8080/styles/outdoor-v2/style.json',
+          uri: mapUri,
           // ignore: undefined_identifier
           // apiKey: stadiaMapsApiKey,
           logger: const Logger.console())
@@ -106,11 +113,26 @@ class _MyHomePageState extends State<MyHomePage> {
         valueListenable: progress,
       );
 
+  Widget zoomLevelSlider() => ValueListenableBuilder<double>(
+        builder: (BuildContext context, double value, Widget? child) => Slider(
+          value: zoomLevel.value,
+          onChanged: (value) {
+            zoomLevel.value = value;
+            _controller.move(_controller.center, value);
+          },
+          min: 15,
+          max: 22,
+          divisions: 14,
+        ),
+        valueListenable: zoomLevel,
+      );
+
   Widget _map(Style style) => FlutterMap(
         mapController: _controller,
         options: MapOptions(
-            center: style.center ?? LatLng(49.246292, -123.116226),
-            zoom: style.zoom ?? 10,
+            center: LatLng(59.438803, 24.775786),
+            zoom: zoomLevel.value,
+            // zoom: 18.76, // problematic zoom level background color and text not stacked together
             maxZoom: 22,
             interactiveFlags: InteractiveFlag.drag |
                 InteractiveFlag.flingAnimation |

@@ -419,11 +419,11 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: "27c2b8e4d62c9d70cf071d4c1659120efebc2ec2"
-      resolved-ref: "27c2b8e4d62c9d70cf071d4c1659120efebc2ec2"
+      ref: "48ccaa32b11428121cfdf90aa58d41f0d4885e9c"
+      resolved-ref: "48ccaa32b11428121cfdf90aa58d41f0d4885e9c"
       url: "https://github.com/sikandernoori/dart-vector-tile-renderer.git"
     source: git
-    version: "3.2.0"
+    version: "3.2.1"
   win32:
     dependency: transitive
     description:

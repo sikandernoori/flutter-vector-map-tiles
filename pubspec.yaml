@@ -18,7 +18,7 @@ dependencies:
   path_provider: ^2.0.2
   vector_tile_renderer:
     git:
-      ref: 27c2b8e4d62c9d70cf071d4c1659120efebc2ec2
+      ref: 48ccaa32b11428121cfdf90aa58d41f0d4885e9c
       url: https://github.com/sikandernoori/dart-vector-tile-renderer.git
   async: ^2.8.2
   executor_lib: ^1.1.0
